@@ -121,7 +121,7 @@ void ompl::geometric::TRRTstar::setup()
     
     // Setup TRRT specific variables ---------------------------------------------------------
     temp_ = initTemperature_;
-    bestCost_ = worstCost_ = opt_->identityCost();
+    //bestCost2_ = worstCost_ = opt_->identityCost();
 
 }
 
@@ -141,8 +141,8 @@ void ompl::geometric::TRRTstar::clear()
 
     // Clear TRRT specific variables ---------------------------------------------------------
     temp_ = initTemperature_;
-    if (opt_)
-        bestCost2_ = worstCost_ = opt_->identityCost();
+    //if (opt_)
+    //bestCost2_ = worstCost_ = opt_->identityCost();
 }
 
 ompl::base::PlannerStatus ompl::geometric::TRRTstar::solve(const base::PlannerTerminationCondition &ptc)
@@ -161,11 +161,17 @@ ompl::base::PlannerStatus ompl::geometric::TRRTstar::solve(const base::PlannerTe
         nn_->add(motion);
         startMotion_ = motion;
 	base::Cost sCost = opt_->stateCost(st);
-
-	if(opt_->isCostBetterThan(sCost , bestCost2_))
+	
+	if(nn_->size() == 0) {
 	  bestCost2_ = sCost;
-	if(opt_->isCostBetterThan(worstCost_, sCost))
 	  worstCost_ = sCost;
+	}
+	else {
+	  if(opt_->isCostBetterThan(sCost , bestCost2_))
+	    bestCost2_ = sCost;
+	  if(opt_->isCostBetterThan(worstCost_, sCost))
+	    worstCost_ = sCost;
+	}
 
     }
 
